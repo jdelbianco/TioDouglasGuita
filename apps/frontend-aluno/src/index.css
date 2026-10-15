@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+
+@theme {
+  /* Isso faz o seu aplicativo inteiro usar a Sansation por padrão */
+  --font-sans: "Sansation", sans-serif;
+  
+  /* Se quiser uma classe específica só para o cronômetro */
+  --font-relogio: "Signika", sans-serif;
+
+}

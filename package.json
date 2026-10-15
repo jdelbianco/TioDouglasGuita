@@ -1,0 +1,21 @@
+{
+  "name": "douglasguita-workspace",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:backend": "npm run server -w @douglasguita/backend-api",
+    "dev:aluno": "npm run dev -w @douglasguita/frontend-aluno",
+    "dev:professor": "npm run dev -w @douglasguita/frontend-professor",
+    "dev:all": "concurrently \"npm run dev:backend\" \"npm run dev:aluno\" \"npm run dev:professor\""
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5"
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.3.3",
+    "tailwindcss": "^4.3.3"
+  }
+}
