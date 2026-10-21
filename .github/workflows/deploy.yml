@@ -1,0 +1,32 @@
+name: "Deploy para VPS"
+on: 
+  push:
+    branches:
+      - main
+
+jobs:
+  build_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: "Baixar o Código"
+      uses: actions/checkout@v4 
+
+    - name: "Copiar arquivos para SSH"
+      uses: appleboy/scp-action@v1
+      with:
+          host: "2.24.208.205"
+          username: "root"
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: "/root/app"
+
+    - name: "Build da aplicação"
+      uses: appleboy/ssh-action@v1
+      with:
+          host: "2.24.208.205"
+          username: "root"
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: 
+            cd /root/app
+            composer install --no-dev --no-progress -a
