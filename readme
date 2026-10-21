@@ -23,6 +23,9 @@ como usar o prisma https://www.youtube.com/watch?v=hfbbjwxeoG0&t=1630s
 
         git init
         git remote add origin https://github.com/jdelbianco/TioDouglasGuita.git
+        git commit -m "Adiciona gitignore na raiz"
+        git branch -M main
+        git push -u origin main
 
 5 -  Deploy do servidor 
 
