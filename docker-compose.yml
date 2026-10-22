@@ -15,7 +15,6 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       args:
-        APP_DIR: apps/frontend-professor
         APP_WORKSPACE: "@douglasguita/frontend-professor"
         VITE_API_URL: /api
     container_name: frontend_professor
@@ -30,7 +29,6 @@ services:
       context: .
       dockerfile: Dockerfile.frontend
       args:
-        APP_DIR: apps/frontend-aluno
         APP_WORKSPACE: "@douglasguita/frontend-aluno"
         VITE_API_URL: /api
     container_name: frontend_aluno
