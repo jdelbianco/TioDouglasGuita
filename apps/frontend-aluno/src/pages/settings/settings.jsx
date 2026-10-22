@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { User, Mail, Lock, Camera, Save, ShieldCheck } from 'lucide-react';
 import api from '../../services/api';
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/navBar";
 
 function Settings() {
   // Estado para armazenar o ID do utilizador logado
