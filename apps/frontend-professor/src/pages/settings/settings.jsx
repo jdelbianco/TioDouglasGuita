@@ -22,17 +22,32 @@ function Settings() {
 
   // Carrega os dados do localStorage ao entrar na página
   useEffect(() => {
+    let active = true;
     const userData = localStorage.getItem('douglasguita_user');
     if (userData) {
       const parsedData = JSON.parse(userData);
       setUserId(parsedData.id);
       setNome(parsedData.name || '');
       setEmail(parsedData.email || '');
-      if (parsedData.profilePicture) {
-        setAvatarPreview(parsedData.profilePicture);
-      }
+
+      api.get(`/user/${parsedData.id}/picture`, { responseType: 'blob' })
+        .then((response) => {
+          if (active) setAvatarPreview(URL.createObjectURL(response.data));
+        })
+        .catch((error) => {
+          if (error.response?.status !== 404) {
+            console.error("Erro ao carregar foto de perfil:", error);
+          }
+        });
     }
+
+    return () => { active = false; };
   }, []);
+
+  useEffect(() => {
+    if (!avatarPreview.startsWith('blob:')) return;
+    return () => URL.revokeObjectURL(avatarPreview);
+  }, [avatarPreview]);
 
   // Função 1: Atualizar Informações Básicas (Nome e E-mail)
   const handleUpdateInfo = async (e) => {
@@ -47,6 +62,7 @@ function Settings() {
       // Atualiza o localStorage com os novos dados
       const currentUserData = JSON.parse(localStorage.getItem('douglasguita_user'));
       const updatedData = { ...currentUserData, name: nome, email: email };
+      delete updatedData.profilePicture;
       localStorage.setItem('douglasguita_user', JSON.stringify(updatedData));
       
       alert("Informações atualizadas com sucesso!");
@@ -84,30 +100,12 @@ function Settings() {
       const formData = new FormData();
       formData.append('profilePicture', file);
 
-      const novaUrl = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            resolve(reader.result);
-          } else {
-            reject(new Error('Não foi possível ler a imagem selecionada.'));
-          }
-        };
-        reader.onerror = () => reject(reader.error || new Error('Erro ao ler a imagem.'));
-        reader.readAsDataURL(file);
-      });
-
       await api.put(`/user/${userId}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
 
-      setAvatarPreview(novaUrl);
-
-      // Atualiza o localStorage
-      const currentUserData = JSON.parse(localStorage.getItem('douglasguita_user'));
-      const updatedData = { ...currentUserData, profilePicture: novaUrl };
-      localStorage.setItem('douglasguita_user', JSON.stringify(updatedData));
-      window.dispatchEvent(new Event('storage'));
+      setAvatarPreview(URL.createObjectURL(file));
+      window.dispatchEvent(new Event('profilePictureUpdated'));
 
     } catch (error) {
       console.error("Erro no upload de foto:", error);

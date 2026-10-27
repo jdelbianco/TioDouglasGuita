@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { LayoutDashboard, ChevronUp, FileText, Menu, X, Settings } from 'lucide-react';
+import api from '../services/api';
 
 function NavBar() {
     const [mostrarSubMenu, setMostrarSubMenu] = useState(true);
@@ -9,7 +10,35 @@ function NavBar() {
     const userData = localStorage.getItem('douglasguita_user');
     const data = userData ? JSON.parse(userData) : null;
 
-    const avatarUrl = data?.profilePicture || `https://github.com/shadcn.png`;
+    const [avatarUrl, setAvatarUrl] = useState('https://github.com/shadcn.png');
+
+    useEffect(() => {
+        let active = true;
+        let objectUrl;
+
+        const loadAvatar = async () => {
+            if (!data?.id) return;
+            try {
+                const response = await api.get(`/user/${data.id}/picture`, { responseType: 'blob' });
+                if (!active) return;
+                if (objectUrl) URL.revokeObjectURL(objectUrl);
+                objectUrl = URL.createObjectURL(response.data);
+                setAvatarUrl(objectUrl);
+            } catch (error) {
+                if (error.response?.status !== 404) {
+                    console.error("Erro ao carregar foto de perfil:", error);
+                }
+            }
+        };
+
+        loadAvatar();
+        window.addEventListener('profilePictureUpdated', loadAvatar);
+        return () => {
+            active = false;
+            window.removeEventListener('profilePictureUpdated', loadAvatar);
+            if (objectUrl) URL.revokeObjectURL(objectUrl);
+        };
+    }, [data?.id]);
 
     return (
         <>

@@ -11,7 +11,17 @@ router.post('/STUDENT', async (req, res) => {
 
     // 1. Busca o utilizador no banco
     const user = await prisma.user.findUnique({
-      where: { email: email }
+      where: { email: email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
+      }
     });
 
     if (!user) {
@@ -64,7 +74,17 @@ router.post('/TEACHER', async (req, res) => {
 
     // 1. Busca o utilizador no banco
     const user = await prisma.user.findUnique({
-      where: { email: email }
+      where: { email: email },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        password: true,
+        role: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
+      }
     });
 
     if (!user) {
